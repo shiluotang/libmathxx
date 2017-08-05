@@ -3,7 +3,7 @@
 #include <ostream>
 
 #include "../misc/utility.hpp"
-#include "stack_matrix.thh"
+#include "stack_matrix.hpp"
 
 namespace mathxx {
     namespace matrix {

@@ -4,7 +4,7 @@
 #include <functional>
 
 #include "../misc/utility.hpp"
-#include "heap_matrix.thh"
+#include "heap_matrix.hpp"
 
 namespace mathxx {
     namespace matrix {

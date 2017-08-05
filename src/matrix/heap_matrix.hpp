@@ -1,7 +1,77 @@
 #ifndef MATHXX_MATRIX_HEAP_MATRIX_HPP_INCLUDED
 #define MATHXX_MATRIX_HEAP_MATRIX_HPP_INCLUDED
 
-#include "heap_matrix.thh"
+#include <cstddef>
+#include <memory>
+#include <utility>
+#include <vector>
+#include <iosfwd>
+
+namespace mathxx {
+    namespace matrix {
+
+        template <typename T, typename Alloc = std::allocator<T> >
+        class heap_matrix {
+            protected:
+                typedef std::vector<T, Alloc>                       container_type;
+            public:
+                typedef typename container_type::value_type         value_type;
+                typedef typename container_type::reference          reference;
+                typedef typename container_type::const_reference    const_reference;
+                typedef typename container_type::pointer            pointer;
+                typedef typename container_type::const_pointer      const_pointer;
+
+                typedef pointer                                     iterator;
+                typedef const_pointer                               const_iterator;
+
+                typedef Alloc   allocator_type;
+            public:
+                heap_matrix(std::size_t, std::size_t, T const &value = T(0));
+                virtual ~heap_matrix();
+
+                std::size_t rows() const { return _M_rows; }
+                std::size_t columns() const { return _M_columns; }
+
+                reference operator () (std::size_t i, std::size_t j) { return _M_data[i * columns() + j]; }
+                const_reference operator () (std::size_t i, std::size_t j) const { return _M_data[i * columns() + j]; }
+
+                iterator begin() { return &_M_data[0]; };
+                iterator end() { return &_M_data[0] + rows() * columns(); };
+
+                const_iterator begin() const { return &_M_data[0]; }
+                const_iterator end() const { return &_M_data[0] + rows() * columns(); }
+
+                heap_matrix<T, Alloc>& operator += (heap_matrix<T, Alloc> const&);
+                heap_matrix<T, Alloc>& operator -= (heap_matrix<T, Alloc> const&);
+                heap_matrix<T, Alloc>& operator *= (T const&);
+                heap_matrix<T, Alloc>& operator /= (T const&);
+
+                heap_matrix<T, Alloc> operator + (heap_matrix<T, Alloc> const&) const;
+                heap_matrix<T, Alloc> operator - (heap_matrix<T, Alloc> const&) const;
+                heap_matrix<T, Alloc> operator * (T const&) const;
+                heap_matrix<T, Alloc> operator / (T const&) const;
+
+                heap_matrix<T, Alloc>& resize(std::size_t, std::size_t);
+            protected:
+                bool same_size(heap_matrix<T, Alloc> const &other) const {
+                    return rows() == other.rows() && columns() == other.columns();
+                }
+            private:
+                std::size_t _M_rows;
+                std::size_t _M_columns;
+                container_type _M_data;
+        };
+
+        template <typename T, typename Alloc>
+        extern std::ostream& operator << (std::ostream&, heap_matrix<T, Alloc> const&);
+
+        template <typename T, typename Alloc>
+        heap_matrix<T, Alloc> operator * (T const &value, heap_matrix<T, Alloc> const &m) {
+            return m.operator*(value);
+        }
+    }
+}
+
 #include "heap_matrix.tcc"
 
 #endif // MATHXX_MATRIX_HEAP_MATRIX_HPP_INCLUDED
